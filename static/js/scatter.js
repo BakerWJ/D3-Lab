@@ -71,7 +71,6 @@
 				counter++;
 			}
 		}
-		console.log(format_data);
 
 		for (var i = 0; i < data.length; i++) {
 			var hw = data[i]["hw1_hrs"];
