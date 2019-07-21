@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<main class="container add-user-section">
+<div class="section-content">
+    <div class="form-style-8">
+    <h2>Create a new user</h2>
+
+    <form method="POST" action="/add-user">
+        
+        {{ form.hidden_tag() }}
+    {% for labels in form %}
+    <div class="form-group">
+    {% if labels.type != "SubmitField" and labels.type != "CSRFTokenField" %}
+            {{ labels.label }}
+
+            {% if labels.errors %}
+                {% for error in labels.errors %}
+                <p class="error-message">{{ error }} </p>
+                {% endfor %}
+            {% endif %}
+
+            {{ labels }}
+    {% endif %}
+
+        </div>
+    {% endfor %}
+
+        {{ form.submit(class="btn btn-primary btn-xl")}}
+
+    </form>
+
+</div>
+</div>
+</main>
+{% endblock %}
