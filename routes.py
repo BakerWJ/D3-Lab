@@ -3,12 +3,14 @@ from models import db, User
 from forms import AddUserForm
 from flask_heroku import Heroku
 # Init Flask
+
 app = Flask(__name__)
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/homework_users'
+#app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 heroku = Heroku(app)
 
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/homework_users'
-# app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
 db.init_app(app)
 app.secret_key = "e-14a secret key"
 
