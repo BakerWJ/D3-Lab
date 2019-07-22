@@ -60,7 +60,6 @@ function createVisBar(data) {
         .thresholds(scX.ticks(10));
 
     const bins = histogram(ageMap);
-    console.log(bins);
     // Y Scale
     const scY = d3.scaleLinear()
         .domain([0, d3.max(bins, function (d) {

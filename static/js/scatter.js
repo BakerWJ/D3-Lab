@@ -18,6 +18,7 @@ function createVisScatter(data) {
 	var height = 300 - margin.top - margin.bottom;
 	var svg = d3.select("#scatter")
 		.append('svg')
+		.attr("class", "scatter")
 		.attr('width', width + margin.left + margin.right)
 		.attr('height', height + margin.top+margin.bottom)
 		.append('g')
@@ -84,11 +85,12 @@ function createVisScatter(data) {
 	var bubble = svg.selectAll('.bubble')
 		.data(format_data)
 		.enter().append('circle')
-		.attr('class', 'bubble')
+		.attr('class', 'non_brushed')
 		.attr('cx', (d) => {return xScale(d[0])})
 		.attr('cy', (d) => {return yScale(d[1])})
 		.attr('r', (d) => {return radius(d[2]);})
-		.style("fill", "#00858f");
+		.style("fill", "#44BBA4");
+
 	svg.append("text")
 		.attr("class", "glabel")
 		.attr("transform",
@@ -107,6 +109,64 @@ function createVisScatter(data) {
 		.style("text-anchor", "middle")
 		.style("font-size", "0.9em")
 		.text("Hours spent on HW1");
+
+	function highlightBrushedCircles () {
+		if (d3.event.selection != null) {
+			bubble.attr("class", "non_brushed")
+				.style("fill", "#44BBA4");
+			var brush_coords = d3.brushSelection(this);
+			bubble.filter(function () {
+				var cx = d3.select(this).attr("cx");
+				var cy = d3.select(this).attr("cy");
+				return isBrushed(brush_coords, cx, cy);
+			})
+				.attr("class", "brushed")
+				.style("fill", "#E94F37");
+		}
+	}
+
+	function isBrushed(brush_coords, cx, cy) {
+		var x0 = brush_coords[0][0],
+			x1 = brush_coords[1][0],
+			y0 = brush_coords[0][1],
+			y1 = brush_coords[1][1];
+		return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;
+	}
+
+	var brush = d3.brush()
+		.on("brush", highlightBrushedCircles)
+		.on("end", updateOthers);
+	svg.append("g")
+		.call(brush);
+
+	function updateOthers() {
+		if(!d3.event.selection) return;
+
+		d3.select(this).call(brush.move, null);
+
+		var d_brushed = d3.selectAll(".brushed").data();
+		var new_data = [];
+		for (var i = 0; i < data.length; i++) {
+			for (var x = 0; x < d_brushed.length; x++) {
+				if (d_brushed[x][0] === data[i]["experience_yr"] && d_brushed[x][1] == data[i]["hw1_hrs"]) {
+					new_data.push(data[i]);
+					x = d_brushed.length;
+				}
+			}
+		}
+		var svg1 = d3.select("#donutChart");
+		svg1.selectAll("*").remove();
+		var svg2 = d3.select("#barChart");
+		svg2.selectAll("*").remove();
+		if (new_data.length > 0) {
+			createVisDonut(new_data);
+			createVisBar(new_data);
+		}
+		else {
+			createVisDonut(data);
+			createVisBar(data);
+		}
+	}
 
 	function makeArray(d1, d2) {
 		var arr = new Array(d1), i, l;
