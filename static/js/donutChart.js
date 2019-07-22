@@ -27,7 +27,7 @@ function createVisDonut(data) {
         radius = 150;
 
     var color = d3.scaleOrdinal()
-        .range(['#1b7688','#1b7676','#f9d057','#f29e2e','#9b0a0a', '#d7191c']);
+        .range(["#003f5c", "#444e86", "#955196", "#dd5182", "#ff6e54", "#ffa600"]);
 
     var arc = d3.arc()
         .outerRadius(radius - 10)
@@ -52,7 +52,10 @@ function createVisDonut(data) {
     var g = svg.selectAll('.arc')
         .data(pie(lang))
         .enter().append("g")
-        .attr('class','arc');
+        .attr('class','arc')
+        .attr("id", (d) => {
+            return d.data.key;
+        });
 
     g.append("path")
         .attr("d", arc)
@@ -73,7 +76,13 @@ function createVisDonut(data) {
                 .attr('text-anchor', 'middle')
                 .attr('dy', '.6em')
         })
+        .on("click", (d) => {
+            var svg1 = d3.select("#barChart");
+            svg1.selectAll("*").remove();
+            var svg2 = d3.select("#scatter");
+            svg2.selectAll("*").remove();
+            createVisBar(data.filter(x => x["prog_lang"] == d.data.key));
+            createVisScatter(data.filter(x => x["prog_lang"] == d.data.key));
+        })
         .style("fill", (d) => {return color(d.data.key)});
-
-    svg.on("click", (d) =>{ console.log(g.attr("hold")) });
 }

@@ -60,7 +60,7 @@ function createVisBar(data) {
         .thresholds(scX.ticks(10));
 
     const bins = histogram(ageMap);
-
+    console.log(bins);
     // Y Scale
     const scY = d3.scaleLinear()
         .domain([0, d3.max(bins, function (d) {
@@ -79,6 +79,20 @@ function createVisBar(data) {
         .enter()
         .append('g')
         .attr('class', 'bar')
+        .on("click", (d) => {
+            var max = d3.extent(d, (l) => {
+                return l;
+            })[1];
+            var min = d3.extent(d, (l) => {
+                return l;
+            })[0];
+            var svg1 = d3.select("#donutChart");
+            svg1.selectAll("*").remove();
+            var svg2 = d3.select("#scatter");
+            svg2.selectAll("*").remove();
+            createVisDonut(data.filter(x => x["age"] <= max && x["age"] >= min));
+            createVisScatter(data.filter(x => x["age"] <= max && x["age"] >= min));
+        })
         .style('transform', (d, i) => {
             return `translate(${i * Math.floor(width / bins.length)}px, ${height - scY(d.length)}px)`;
         });

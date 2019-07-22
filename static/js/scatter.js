@@ -28,8 +28,6 @@ function createVisScatter(data) {
 			return d["experience_yr"];
 		}))
 		.range([0, width]);
-
-
 	var yhold = d3.extent(data, (d) => {
 		return d["hw1_hrs"];
 	});
@@ -58,10 +56,10 @@ function createVisScatter(data) {
 		return d["hw1_hrs"];
 	})[1];
 
+
 	var xMax = d3.extent(data, (d) => {
 		return d["experience_yr"];
 	})[1];
-
 	var format_data = makeArray(3, (xMax+1)*(yMax+1));
 	var counter = 0;
 	for (var i = 0; i < xMax+1; i++) {
@@ -75,17 +73,13 @@ function createVisScatter(data) {
 	for (var i = 0; i < data.length; i++) {
 		var hw = data[i]["hw1_hrs"];
 		var exp = data[i]["experience_yr"];
-		format_data[exp * 16 + hw][2]++;
+		format_data[exp * (yMax+1) + hw][2]++;
 	}
 	const radius = d3.scaleSqrt()
 		.domain(d3.extent(format_data, (d) => {
 			return d[2];
 		}))
 		.range([0, 8]);
-
-
-
-
 
 	var bubble = svg.selectAll('.bubble')
 		.data(format_data)
