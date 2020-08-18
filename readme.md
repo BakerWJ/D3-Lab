@@ -25,3 +25,4 @@
     + load users page
 
 
+This project was created in Harvard's S14A course. This includes three graphs created in javascript's D3 library that are all interactive. Flask was used as the backend for this project.
